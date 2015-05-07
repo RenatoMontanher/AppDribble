@@ -1,0 +1,81 @@
+apply plugin: 'com.android.application'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+    }
+}
+apply plugin: 'com.neenbedankt.android-apt'
+android {
+    compileSdkVersion 20
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        applicationId "renato.com.br.dribbbleapp"
+        minSdkVersion 15
+        targetSdkVersion 20
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'build/generated/source/apt/${variant.dirName}']
+        }
+    }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
+}
+
+apt {
+    arguments {
+        androidManifestFile variant.processResources.manifestFile
+        resourcePackageName android.defaultConfig.applicationId
+        logLevel 'WARN'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    ///////////
+    // APT
+    apt 'org.androidannotations:androidannotations:3.1'
+
+    // Android Annotations
+    compile 'org.androidannotations:androidannotations-api:3.1'
+
+    // Networking
+    compile 'com.squareup.retrofit:retrofit:1.7.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile 'com.squareup.okio:okio:1.0.1'
+
+    //imagens
+    compile group:'com.squareup.picasso', name:'picasso', version:'2.3.2'
+
+    compile 'me.grantland:autofittextview:0.2.+'
+
+    ////////////
+    // Test
+    androidTestCompile 'com.jakewharton.espresso:espresso:1.1-r3'
+    androidTestCompile 'com.squareup.retrofit:retrofit-mock:1.7.0'
+
+
+}
